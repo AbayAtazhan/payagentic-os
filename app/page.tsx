@@ -3,6 +3,7 @@ import {
   ArrowRight,
   BarChart3,
   Bot,
+  Play,
   Sparkles,
   Zap,
 } from 'lucide-react';
@@ -71,6 +72,15 @@ export default function Home() {
                   <Zap className="h-4 w-4 text-amber-500" />
                   Live REST Console
                 </Link>
+                <a
+                  href="/demo-video.mp4"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 rounded-lg border border-emerald-300 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-semibold px-4 py-2.5 text-sm transition shadow-2xs"
+                >
+                  <Play className="h-4 w-4 text-emerald-600 fill-emerald-600" />
+                  Watch Pitch Video (75s)
+                </a>
               </div>
             </div>
 

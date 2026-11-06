@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>PayAgentic OS · PayPal AI Hackathon 2026</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.15.0/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --bg-main: #060913;
+        --bg-card: rgba(15, 23, 42, 0.75);
+        --border-card: rgba(56, 189, 248, 0.2);
+        --pp-blue: #0070BA;
+        --pp-light: #00CFDE;
+        --ag-green: #10B981;
+        --accent-purple: #8B5CF6;
+        --ink: #FFFFFF;
+        --ink-sub: #94A3B8;
+        --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html, body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background-color: var(--bg-main);
+        font-family: var(--font-sans);
+        color: var(--ink);
+        -webkit-font-smoothing: antialiased;
+      }
+      #root {
+        position: relative;
+        width: 1920px;
+        height: 1080px;
+        background: radial-gradient(circle at 50% 10%, rgba(0, 112, 186, 0.15) 0%, transparent 60%),
+                    radial-gradient(circle at 80% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+                    linear-gradient(180deg, #070B14 0%, #03060B 100%);
+      }
+
+      /* Animated cyber grid background */
+      .grid-bg {
+        position: absolute;
+        inset: 0;
+        background-image: 
+          linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+          linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        background-size: 80px 80px;
+        pointer-events: none;
+      }
+
+      /* Common scene layout */
+      .scene {
+        position: absolute;
+        inset: 0;
+        width: 1920px;
+        height: 1080px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 60px 100px;
+      }
+
+      /* Inner scene container to animate */
+      .scene-inner {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+
+      /* Top persistent branding bar */
+      .top-nav {
+        position: absolute;
+        top: 40px;
+        left: 80px;
+        right: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        z-index: 100;
+      }
+      .brand-badge {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        padding: 10px 20px;
+        border-radius: 9999px;
+        backdrop-filter: blur(12px);
+      }
+      .brand-title {
+        font-weight: 800;
+        font-size: 18px;
+        letter-spacing: -0.02em;
+        background: linear-gradient(90deg, #38BDF8, #818CF8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hackathon-pill {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        color: #38BDF8;
+        background: rgba(0, 112, 186, 0.25);
+        border: 1px solid rgba(0, 112, 186, 0.4);
+        padding: 6px 14px;
+        border-radius: 9999px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+
+      /* Card styling */
+      .glass-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-card);
+        border-radius: 20px;
+        padding: 32px;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 112, 186, 0.1);
+      }
+
+      /* Badges */
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+      .tag-pp { background: rgba(0, 112, 186, 0.25); color: #38BDF8; border: 1px solid rgba(0, 112, 186, 0.5); }
+      .tag-ag { background: rgba(16, 185, 129, 0.2); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); }
+      .tag-purple { background: rgba(139, 92, 246, 0.2); color: #C084FC; border: 1px solid rgba(139, 92, 246, 0.4); }
+      .tag-risk { background: rgba(245, 158, 11, 0.2); color: #FBBF24; border: 1px solid rgba(245, 158, 11, 0.4); }
+
+      /* Scene 1 Elements */
+      .hero-logo-box {
+        display: flex;
+        align-items: center;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+      .hero-title {
+        font-size: 88px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 1.05;
+        text-align: center;
+        background: linear-gradient(135deg, #FFFFFF 30%, #38BDF8 80%, #0070BA 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero-sub {
+        font-size: 32px;
+        font-weight: 500;
+        color: var(--ink-sub);
+        text-align: center;
+        margin-top: 16px;
+        max-width: 1000px;
+      }
+      .hero-chips {
+        display: flex;
+        gap: 16px;
+        margin-top: 40px;
+      }
+
+      /* Scene 2: Agents Grid */
+      .agents-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 32px;
+        width: 100%;
+        max-width: 1600px;
+        margin-top: 40px;
+      }
+      .agent-card {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        position: relative;
+        overflow: hidden;
+      }
+      .agent-card::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 4px;
+      }
+      .agent-card.ar::before { background: linear-gradient(90deg, #38BDF8, #0070BA); }
+      .agent-card.ap::before { background: linear-gradient(90deg, #10B981, #059669); }
+      .agent-card.risk::before { background: linear-gradient(90deg, #F59E0B, #DC2626); }
+
+      /* Scene 3: Guardrail Matrix */
+      .matrix-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 28px;
+        width: 100%;
+        max-width: 1500px;
+        margin-top: 36px;
+      }
+      .metric-box {
+        background: rgba(15, 23, 42, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+      }
+      .metric-value {
+        font-size: 56px;
+        font-weight: 800;
+        margin-top: 12px;
+        letter-spacing: -0.02em;
+      }
+
+      /* Scene 4: Partners */
+      .partners-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 24px;
+        width: 100%;
+        max-width: 1600px;
+        margin-top: 36px;
+      }
+      .partner-card {
+        background: rgba(15, 23, 42, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 18px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      /* Scene 5: Terminal / Live Copilot UI */
+      .terminal-window {
+        width: 100%;
+        max-width: 1400px;
+        background: #0B1120;
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+        margin-top: 30px;
+      }
+      .terminal-header {
+        background: #080D1A;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .dot { width: 12px; height: 12px; border-radius: 50%; }
+      .dot.red { background: #EF4444; }
+      .dot.yellow { background: #F59E0B; }
+      .dot.green { background: #10B981; }
+      .terminal-body {
+        padding: 32px;
+        font-family: 'SF Mono', Monaco, Menlo, monospace;
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      /* Progress Bar at bottom */
+      .bottom-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 6px;
+        background: linear-gradient(90deg, #0070BA, #10B981, #00CFDE);
+        width: 0%;
+        z-index: 200;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="75"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Audio Narration Elements -->
+      <audio id="audio-s1" src="./assets/audio/scene1.mp3" data-start="0.8" data-duration="8.2" data-volume="1"></audio>
+      <audio id="audio-s2" src="./assets/audio/scene2.mp3" data-start="10.5" data-duration="12.3" data-volume="1"></audio>
+      <audio id="audio-s3" src="./assets/audio/scene3.mp3" data-start="24.0" data-duration="14.6" data-volume="1"></audio>
+      <audio id="audio-s4" src="./assets/audio/scene4.mp3" data-start="39.5" data-duration="15.6" data-volume="1"></audio>
+      <audio id="audio-s5" src="./assets/audio/scene5.mp3" data-start="56.0" data-duration="8.9" data-volume="1"></audio>
+      <audio id="audio-s6" src="./assets/audio/scene6.mp3" data-start="66.0" data-duration="9.0" data-volume="1"></audio>
+
+      <div class="grid-bg"></div>
+
+      <!-- Top Persistent Navigation Bar -->
+      <div class="top-nav">
+        <div class="brand-badge">
+          <!-- PayPal Logo Icon SVG -->
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M19.5 7.5C18.8 3.8 15.8 2 11.2 2H4.5C4 2 3.5 2.4 3.4 3L1 18.2C0.9 18.7 1.3 19.2 1.8 19.2H6.2L7.3 12.3C7.4 11.7 7.9 11.3 8.5 11.3H10.5C15.1 11.3 18.6 9.4 19.5 7.5Z" fill="#0070BA"/>
+            <path d="M19.5 7.5C18.6 11.8 15.1 14 10.5 14H8.5L7.3 21.6C7.2 22.1 7.6 22.6 8.1 22.6H12.2C12.7 22.6 13.2 22.2 13.3 21.6L14.2 15.9C14.3 15.3 14.8 14.9 15.4 14.9H16.2C20.2 14.9 23.3 13 24 8.7C24.3 6.9 23.9 5.4 22.8 4.3C21.8 5.7 20.8 6.9 19.5 7.5Z" fill="#00CFDE"/>
+          </svg>
+          <span class="brand-title">PAYAGENTIC OS</span>
+        </div>
+        <div class="hackathon-pill">
+          <span>🏆 PayPal AI Hackathon 2026 Submission</span>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 1: HERO & PROBLEM ================= -->
+      <div id="scene1" class="scene clip" data-start="0" data-duration="10" data-track-index="0">
+        <div id="s1-content" class="scene-inner">
+          <div class="hero-logo-box">
+            <span class="tag tag-pp">PayPal REST Sandbox</span>
+            <span class="tag tag-ag">AG Grid 36 & AG Studio 3</span>
+            <span class="tag tag-purple">APIMatic OpenAPI</span>
+          </div>
+          <h1 class="hero-title" id="s1-title">PayAgentic OS</h1>
+          <p class="hero-sub" id="s1-sub">
+            The Enterprise Autonomous Commerce & Treasury Intelligence Swarm
+          </p>
+          <div class="hero-chips" id="s1-chips">
+            <div class="brand-badge" style="border-color: rgba(56, 189, 248, 0.4);">
+              <span style="color: #38BDF8; font-weight: 700;">⚡ Self-Healing Receivables</span>
+            </div>
+            <div class="brand-badge" style="border-color: rgba(16, 185, 129, 0.4);">
+              <span style="color: #34D399; font-weight: 700;">🛡️ $500 Real-Time Guardrails</span>
+            </div>
+            <div class="brand-badge" style="border-color: rgba(139, 92, 246, 0.4);">
+              <span style="color: #C084FC; font-weight: 700;">🤖 3 Autonomous Subagents</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 2: THE 3 SUBAGENTS ================= -->
+      <div id="scene2" class="scene clip" data-start="10" data-duration="13.5" data-track-index="0">
+        <div id="s2-content" class="scene-inner">
+          <span class="tag tag-pp">Autonomous Intelligence Swarm</span>
+          <h2 style="font-size: 54px; font-weight: 800; margin-top: 12px; letter-spacing: -0.03em;">
+            Three Autonomous Treasury Agents
+          </h2>
+          <p style="color: var(--ink-sub); font-size: 22px; margin-top: 8px;">
+            Continuous real-time reasoning and actions directly over PayPal REST Sandbox APIs
+          </p>
+
+          <div class="agents-grid">
+            <div class="agent-card ar" id="s2-card1">
+              <div>
+                <span class="tag tag-pp">Subagent 1</span>
+                <h3 style="font-size: 26px; font-weight: 700; margin-top: 16px;">AR Collections & Dunning</h3>
+                <p style="color: var(--ink-sub); font-size: 16px; margin-top: 10px; line-height: 1.5;">
+                  Continuously analyzes overdue invoices. Dispatches intelligent follow-ups with dynamic 3% prompt-settlement discounts.
+                </p>
+              </div>
+              <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 13px; color: #38BDF8; font-weight: 600;">PayPal API: POST /v2/invoicing/send</div>
+                <div style="font-size: 13px; color: var(--ink-sub); margin-top: 4px;">Delinquency Reduction: +34%</div>
+              </div>
+            </div>
+
+            <div class="agent-card ap" id="s2-card2">
+              <div>
+                <span class="tag tag-ag">Subagent 2</span>
+                <h3 style="font-size: 26px; font-weight: 700; margin-top: 16px;">AP Milestone Escrow</h3>
+                <p style="color: var(--ink-sub); font-size: 16px; margin-top: 10px; line-height: 1.5;">
+                  Verifies vendor deliverables against GitHub pull requests and test passes. Automatically executes batch disbursements.
+                </p>
+              </div>
+              <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 13px; color: #34D399; font-weight: 600;">PayPal API: POST /v1/payments/payouts</div>
+                <div style="font-size: 13px; color: var(--ink-sub); margin-top: 4px;">Confidence Threshold: 97%</div>
+              </div>
+            </div>
+
+            <div class="agent-card risk" id="s2-card3">
+              <div>
+                <span class="tag tag-risk">Subagent 3</span>
+                <h3 style="font-size: 26px; font-weight: 700; margin-top: 16px;">Risk & Fraud Sentinel</h3>
+                <p style="color: var(--ink-sub); font-size: 16px; margin-top: 10px; line-height: 1.5;">
+                  Monitors transaction stream velocity. Flags 3-sigma volume spikes and creates escrow orders to freeze anomalous flows.
+                </p>
+              </div>
+              <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.1);">
+                <div style="font-size: 13px; color: #FBBF24; font-weight: 600;">PayPal API: POST /v2/checkout/orders</div>
+                <div style="font-size: 13px; color: var(--ink-sub); margin-top: 4px;">Safety Routing: Automatic Escrow Hold</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 3: ENTERPRISE GUARDRAILS ================= -->
+      <div id="scene3" class="scene clip" data-start="23.5" data-duration="15.5" data-track-index="0">
+        <div id="s3-content" class="scene-inner">
+          <span class="tag tag-pp">Safety Architecture</span>
+          <h2 style="font-size: 54px; font-weight: 800; margin-top: 12px; letter-spacing: -0.03em;">
+            Enterprise Safety & Policy Matrix
+          </h2>
+          <p style="color: var(--ink-sub); font-size: 22px; margin-top: 8px;">
+            Autonomous speed with enterprise-grade financial controls and cryptographic guarantees
+          </p>
+
+          <div class="matrix-grid">
+            <div class="metric-box" id="s3-m1">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; font-weight: 600; color: var(--ink-sub); text-transform: uppercase;">Confidence Gate</span>
+                <span class="tag tag-ag">Active</span>
+              </div>
+              <div class="metric-value" style="color: #34D399;">&ge; 92%</div>
+              <p style="color: var(--ink-sub); font-size: 15px; margin-top: 12px; line-height: 1.5;">
+                Actions scored under 92% confidence require human sign-off before hitting PayPal APIs.
+              </p>
+            </div>
+
+            <div class="metric-box" id="s3-m2">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; font-weight: 600; color: var(--ink-sub); text-transform: uppercase;">Autonomous Payout Cap</span>
+                <span class="tag tag-pp">Enforced</span>
+              </div>
+              <div class="metric-value" style="color: #38BDF8;">$500.00</div>
+              <p style="color: var(--ink-sub); font-size: 15px; margin-top: 12px; line-height: 1.5;">
+                Disbursements above $500 are held in escrow for merchant operator sign-off in AG Grid.
+              </p>
+            </div>
+
+            <div class="metric-box" id="s3-m3">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <span style="font-size: 14px; font-weight: 600; color: var(--ink-sub); text-transform: uppercase;">Cryptographic Idempotency</span>
+                <span class="tag tag-purple">Zero-Duplication</span>
+              </div>
+              <div class="metric-value" style="color: #C084FC; font-size: 32px; font-family: monospace; margin-top: 24px;">
+                IDEMP-COPILOT-9812
+              </div>
+              <p style="color: var(--ink-sub); font-size: 15px; margin-top: 20px; line-height: 1.5;">
+                Unique PayPal-Request-Id generated on every transaction to prevent double disbursement.
+              </p>
+            </div>
+          </div>
+
+          <div style="margin-top: 32px; display: flex; align-items: center; gap: 16px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3); border-radius: 12px; padding: 14px 28px;">
+            <span style="color: #34D399; font-weight: 700;">🛡️ Verified Rule:</span>
+            <span style="color: #E2E8F0; font-size: 16px;">If Amount &gt; $500.00 &rarr; Intercept & Route to Command Center Queue (Passed in Automated Runtime Audit)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 4: 4 PARTNERS INTEGRATION ================= -->
+      <div id="scene4" class="scene clip" data-start="39" data-duration="16.5" data-track-index="0">
+        <div id="s4-content" class="scene-inner">
+          <span class="tag tag-pp">Quad-Partner Synergy</span>
+          <h2 style="font-size: 54px; font-weight: 800; margin-top: 12px; letter-spacing: -0.03em;">
+            Deep Multi-Partner Architecture
+          </h2>
+          <p style="color: var(--ink-sub); font-size: 22px; margin-top: 8px;">
+            Every component leverages official partner platforms and best practices
+          </p>
+
+          <div class="partners-grid">
+            <div class="partner-card" id="s4-p1">
+              <span class="tag tag-pp">Core Platform</span>
+              <h3 style="font-size: 24px; font-weight: 700; margin-top: 16px;">PayPal REST Sandbox</h3>
+              <ul style="color: var(--ink-sub); font-size: 15px; margin-top: 14px; line-height: 1.8; list-style-position: inside;">
+                <li>Invoicing v2 APIs</li>
+                <li>Batch Payouts v1</li>
+                <li>Checkout Orders v2</li>
+                <li>Multi-Currency Balances</li>
+                <li>Webhooks Ingestion</li>
+              </ul>
+            </div>
+
+            <div class="partner-card" id="s4-p2">
+              <span class="tag tag-ag">UI & Analytics</span>
+              <h3 style="font-size: 24px; font-weight: 700; margin-top: 16px;">AG Grid 36 & AG Studio</h3>
+              <ul style="color: var(--ink-sub); font-size: 15px; margin-top: 14px; line-height: 1.8; list-style-position: inside;">
+                <li>5-Collection Relational BI</li>
+                <li>Custom Action Cell Renderers</li>
+                <li>CSV & Telemetry Export</li>
+                <li>Column Autosizing</li>
+                <li>Streaming State Updates</li>
+              </ul>
+            </div>
+
+            <div class="partner-card" id="s4-p3">
+              <span class="tag tag-purple">API Intelligence</span>
+              <h3 style="font-size: 24px; font-weight: 700; margin-top: 16px;">APIMatic Plugin</h3>
+              <ul style="color: var(--ink-sub); font-size: 15px; margin-top: 14px; line-height: 1.8; list-style-position: inside;">
+                <li>OpenAPI 3.1 Contract</li>
+                <li>LLM Tool Definition Schema</li>
+                <li>.apimatic/context.json</li>
+                <li>Interactive API Portal</li>
+                <li>SDK Auto-Generation</li>
+              </ul>
+            </div>
+
+            <div class="partner-card" id="s4-p4">
+              <span class="tag" style="background: rgba(236, 72, 153, 0.2); color: #F472B6; border: 1px solid rgba(236, 72, 153, 0.4);">Cloud & Infra</span>
+              <h3 style="font-size: 24px; font-weight: 700; margin-top: 16px;">Render & Vercel</h3>
+              <ul style="color: var(--ink-sub); font-size: 15px; margin-top: 14px; line-height: 1.8; list-style-position: inside;">
+                <li>render.yaml IaC Blueprint</li>
+                <li>/api/health Check Route</li>
+                <li>Global Edge Vercel Node</li>
+                <li>Zero-Downtime Pipeline</li>
+                <li>100% Passing Unit Tests</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 5: LIVE COPILOT DEMO ================= -->
+      <div id="scene5" class="scene clip" data-start="55.5" data-duration="10" data-track-index="0">
+        <div id="s5-content" class="scene-inner">
+          <span class="tag tag-pp">Live System Telemetry</span>
+          <h2 style="font-size: 54px; font-weight: 800; margin-top: 12px; letter-spacing: -0.03em;">
+            Natural Language Copilot in Action
+          </h2>
+          <p style="color: var(--ink-sub); font-size: 22px; margin-top: 8px;">
+            Demonstrating instant policy enforcement on live sandbox requests
+          </p>
+
+          <div class="terminal-window" id="s5-term">
+            <div class="terminal-header">
+              <div class="dot red"></div>
+              <div class="dot yellow"></div>
+              <div class="dot green"></div>
+              <span style="font-size: 13px; color: var(--ink-sub); font-family: monospace; margin-left: 12px;">payagentic-copilot — zsh</span>
+            </div>
+            <div class="terminal-body">
+              <div style="color: #38BDF8;">&gt; USER: "Disburse payout of $2,500 to vendor@cloudmatrix.com"</div>
+              <div style="color: #FBBF24; margin-top: 12px; padding-left: 16px; border-left: 3px solid #F59E0B;">
+                ⚠️ [Enterprise Guardrail Enforced]: Requested payout of $2,500.00 USD exceeds the autonomous safety cap ($500.00 USD).<br/>
+                🛡️ [Action Required]: Action ACT-AP-COPILOT-mw58 held in escrow and queued in AG Grid Command Center for sign-off.
+              </div>
+              
+              <div style="color: #38BDF8; margin-top: 24px;">&gt; USER: "Disburse milestone payout of $350 to dev@guild.example.com"</div>
+              <div style="color: #34D399; margin-top: 12px; padding-left: 16px; border-left: 3px solid #10B981;">
+                ⚡ [PayPal Payout Dispatched]: Batch ID: PAYOUTS-SIM-MW58 · Amount: $350.00 USD · Status: SUCCESS<br/>
+                🔒 [Idempotency Verified]: Header PayPal-Request-Id: IDEMP-COPILOT-1793985413438
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= SCENE 6: OUTRO & SUBMISSION ================= -->
+      <div id="scene6" class="scene clip" data-start="65.5" data-duration="9.5" data-track-index="0">
+        <div id="s6-content" class="scene-inner">
+          <span class="tag tag-ag">PayPal AI Hackathon 2026</span>
+          <h1 class="hero-title" style="font-size: 78px; margin-top: 16px;">
+            PayAgentic OS
+          </h1>
+          <p class="hero-sub" style="font-size: 26px; margin-top: 12px;">
+            The Next Generation of Autonomous Commerce on PayPal
+          </p>
+
+          <div style="display: flex; gap: 32px; margin-top: 40px;" id="s6-links">
+            <div class="glass-card" style="padding: 24px 36px; text-align: center;">
+              <div style="font-size: 14px; color: var(--ink-sub); text-transform: uppercase; font-weight: 700;">Live Production URL</div>
+              <div style="font-size: 24px; color: #38BDF8; font-weight: 800; margin-top: 6px;">payagentic-os.vercel.app</div>
+            </div>
+            <div class="glass-card" style="padding: 24px 36px; text-align: center;">
+              <div style="font-size: 14px; color: var(--ink-sub); text-transform: uppercase; font-weight: 700;">GitHub Repository</div>
+              <div style="font-size: 24px; color: #34D399; font-weight: 800; margin-top: 6px;">github.com/AbayAtazhan/payagentic-os</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 40px; display: flex; gap: 20px;">
+            <span class="tag tag-pp">100% Passing Tests</span>
+            <span class="tag tag-ag">MIT Licensed</span>
+            <span class="tag tag-purple">Zero-Fail Simulation Fallback</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Progress Bar -->
+      <div class="bottom-progress" id="progress-bar"></div>
+    </div>
+
+    <!-- GSAP Animation Engine -->
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      // Progress bar over 75 seconds
+      tl.to("#progress-bar", { width: "100%", duration: 75, ease: "none" }, 0);
+
+      // --- Scene 1 Animations (0s - 10s) ---
+      tl.fromTo("#s1-title", { opacity: 0, y: 30, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 1.2, ease: "power3.out" }, 0.5);
+      tl.fromTo("#s1-sub", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 1, ease: "power3.out" }, 1.2);
+      tl.fromTo("#s1-chips > div", { opacity: 0, scale: 0.8 }, { opacity: 1, scale: 1, stagger: 0.2, duration: 0.8, ease: "back.out(1.5)" }, 2.0);
+      tl.to("#s1-content", { opacity: 0, y: -20, duration: 0.8, ease: "power2.in" }, 9.0);
+
+      // --- Scene 2 Animations (10s - 23.5s) ---
+      tl.fromTo("#s2-card1", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 11.0);
+      tl.fromTo("#s2-card2", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 12.0);
+      tl.fromTo("#s2-card3", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "power3.out" }, 13.0);
+      tl.to("#s2-content", { opacity: 0, y: -20, duration: 0.8, ease: "power2.in" }, 22.5);
+
+      // --- Scene 3 Animations (23.5s - 39s) ---
+      tl.fromTo("#s3-m1", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, 24.5);
+      tl.fromTo("#s3-m2", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, 26.0);
+      tl.fromTo("#s3-m3", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, duration: 0.8, ease: "back.out(1.4)" }, 27.5);
+      tl.to("#s3-content", { opacity: 0, y: -20, duration: 0.8, ease: "power2.in" }, 38.0);
+
+      // --- Scene 4 Animations (39s - 55.5s) ---
+      tl.fromTo(["#s4-p1", "#s4-p2", "#s4-p3", "#s4-p4"], { opacity: 0, y: 30 }, { opacity: 1, y: 0, stagger: 0.3, duration: 0.8, ease: "power3.out" }, 40.0);
+      tl.to("#s4-content", { opacity: 0, y: -20, duration: 0.8, ease: "power2.in" }, 54.5);
+
+      // --- Scene 5 Animations (55.5s - 65.5s) ---
+      tl.fromTo("#s5-term", { opacity: 0, y: 40, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 1.0, ease: "power3.out" }, 56.5);
+      tl.to("#s5-content", { opacity: 0, y: -20, duration: 0.8, ease: "power2.in" }, 64.5);
+
+      // --- Scene 6 Animations (65.5s - 75s) ---
+      tl.fromTo("#s6-links > div", { opacity: 0, scale: 0.9 }, { opacity: 1, scale: 1, stagger: 0.25, duration: 0.9, ease: "back.out(1.4)" }, 67.0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
