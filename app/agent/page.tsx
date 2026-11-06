@@ -91,24 +91,71 @@ export default function AgentCommandCenter() {
   };
 
   const handleApprove = async (actionId: string) => {
-    const res = await fetch('/api/agent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'approve', actionId }),
-    });
-    if (res.ok) {
-      await fetchData();
+    // 1. Optimistic UI update: instantly mark row as Approved in browser state
+    setActions((prev) =>
+      prev.map((a) =>
+        a.id === actionId
+          ? {
+              ...a,
+              status: 'APPROVED',
+              executedAt: new Date().toISOString(),
+              paypalRefId: 'DISPATCHING...',
+            }
+          : a
+      )
+    );
+
+    try {
+      const res = await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'approve', actionId }),
+      });
+      const data = await res.json();
+      if (data.success && data.referenceId) {
+        setActions((prev) =>
+          prev.map((a) =>
+            a.id === actionId
+              ? {
+                  ...a,
+                  status: 'APPROVED',
+                  executedAt: new Date().toISOString(),
+                  paypalRefId: data.referenceId,
+                }
+              : a
+          )
+        );
+        setLogs((prev) => [
+          {
+            id: `LOG-${Date.now()}`,
+            timestamp: new Date().toISOString(),
+            actionId,
+            agentType: 'AP_PAYOUTS',
+            event: 'MANUALLY_APPROVED',
+            details: `Approved by merchant and executed via PayPal Sandbox. Ref: ${data.referenceId}`,
+            paypalReference: data.referenceId,
+          },
+          ...prev,
+        ]);
+      }
+    } catch (e) {
+      console.error('Approve failed:', e);
     }
   };
 
   const handleReject = async (actionId: string) => {
-    const res = await fetch('/api/agent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ action: 'reject', actionId }),
-    });
-    if (res.ok) {
-      await fetchData();
+    // Optimistic UI update
+    setActions((prev) =>
+      prev.map((a) => (a.id === actionId ? { ...a, status: 'REJECTED' } : a))
+    );
+    try {
+      await fetch('/api/agent', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'reject', actionId }),
+      });
+    } catch (e) {
+      console.error('Reject failed:', e);
     }
   };
 
