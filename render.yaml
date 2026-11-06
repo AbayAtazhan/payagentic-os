@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: payagentic-os
+    env: node
+    plan: standard
+    buildCommand: npm install && npm run build
+    startCommand: npm run start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_SECRET
+        sync: false
+      - key: AG_STUDIO_OPENAI_API_KEY
+        sync: false
+      - key: NEXT_PUBLIC_DEMO_MODE
+        value: "true"
