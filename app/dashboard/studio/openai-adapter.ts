@@ -711,7 +711,7 @@ export function openaiAdapter(options: OpenAiAdapterOptions): AgLlmAdapter {
     const config: OpenAiConfig = {
         endpoint: options.endpoint ?? 'https://api.openai.com/v1',
         key: options.key,
-        model: options.model ?? 'gpt-5.4-mini',
+        model: options.model ?? 'gpt-4o-mini',
         organization: options.organization,
     };
 

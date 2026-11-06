@@ -56,7 +56,7 @@ export function isPayPalConfigured(): boolean {
 }
 
 export function isSimulationMode(): boolean {
-  if (process.env.NEXT_PUBLIC_FORCE_DEMO === 'true') return true;
+  if (process.env.NEXT_PUBLIC_FORCE_DEMO === 'true' || process.env.NEXT_PUBLIC_DEMO_MODE === 'true') return true;
   return !isPayPalConfigured();
 }
 
@@ -282,7 +282,17 @@ export async function listInvoices(): Promise<Invoice[]> {
   try {
     const summaries = await listAll<{ id: string }>('/v2/invoicing/invoices?total_required=true', 'items', 100);
     if (!summaries || summaries.length === 0) return simulatedInvoices;
-    return Promise.all(summaries.map((i) => get<Invoice>(`/v2/invoicing/invoices/${encodeURIComponent(i.id)}`)));
+    // Chunk requests into batches of 5 to protect against PayPal sandbox 429 rate-limiting
+    const results: Invoice[] = [];
+    const batchSize = 5;
+    for (let i = 0; i < summaries.length; i += batchSize) {
+      const chunk = summaries.slice(i, i + batchSize);
+      const fetched = await Promise.all(
+        chunk.map((item) => get<Invoice>(`/v2/invoicing/invoices/${encodeURIComponent(item.id)}`)),
+      );
+      results.push(...fetched);
+    }
+    return results;
   } catch (err) {
     console.warn('[PayPal REST] listInvoices failed, falling back to mock:', err);
     return simulatedInvoices;

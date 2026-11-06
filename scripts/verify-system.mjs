@@ -1,5 +1,4 @@
 // Automated end-to-end verification and security audit script for PayAgentic OS
-import { createServer } from 'http';
 import { readFileSync, existsSync } from 'fs';
 
 console.log('====================================================');

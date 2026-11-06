@@ -3,21 +3,13 @@ import {
   ArrowRight,
   BarChart3,
   Bot,
-  CheckCircle2,
-  Cpu,
-  CreditCard,
-  FileText,
-  Layers,
-  Send,
-  Shield,
   Sparkles,
   Zap,
 } from 'lucide-react';
-import { isPayPalConfigured, isSimulationMode } from '@/lib/paypal';
+import { isPayPalConfigured } from '@/lib/paypal';
 
 export default function Home() {
   const configured = isPayPalConfigured();
-  const simulation = isSimulationMode();
 
   return (
     <main className="min-h-screen bg-slate-50 font-sans text-slate-900 pb-20">

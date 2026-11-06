@@ -2,7 +2,7 @@
 // never passed to a client component, and it has no NEXT_PUBLIC_ prefix, so Next.js never inlines it
 // into the browser bundle.
 
-const DEFAULT_MODELS = ['gpt-5.4-mini'];
+const DEFAULT_MODELS = ['gpt-4o-mini', 'gpt-4o'];
 
 // AG_STUDIO_OPENAI_API_KEY is specific to this app, so a key set for it in .env.local always wins.
 // OPENAI_API_KEY is the fallback, so a key already exported for other tools works with no setup.

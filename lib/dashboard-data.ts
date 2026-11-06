@@ -231,6 +231,8 @@ function transactionRows(transactions: Transaction[]) {
   return transactions.map(({ transaction_info: t, payer_info: p }) => {
     const amt = amountOf(t.transaction_amount);
     const fee = amountOf(t.fee_amount);
+    // Ensure net reflects gross minus fee regardless of fee sign convention
+    const net = amt >= 0 ? round2(amt - Math.abs(fee)) : round2(amt + Math.abs(fee));
     return {
       id: t.transaction_id,
       date: t.transaction_initiation_date ?? null,
@@ -240,7 +242,7 @@ function transactionRows(transactions: Transaction[]) {
       currency: t.transaction_amount?.currency_code ?? null,
       amount: amt,
       fee,
-      net: round2(amt + fee),
+      net,
       endingBalance: t.ending_balance ? amountOf(t.ending_balance) : null,
       counterparty: p?.email_address ?? null,
       note: t.transaction_note ?? null,

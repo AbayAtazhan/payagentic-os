@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import {
   executeApprovedAction,
-  getAgentConfig,
-  getAuditLogs,
   rejectAction,
   runAgentScan,
   updateAgentConfig,
@@ -11,12 +9,13 @@ import { isPayPalConfigured, isSimulationMode } from '@/lib/paypal';
 
 export async function GET() {
   try {
-    const data = await runAgentScan();
+    const data = await runAgentScan(false);
     return NextResponse.json({
       success: true,
       actions: data.actions,
       logs: data.logs,
       config: data.config,
+      balances: data.balances,
       environment: {
         isPayPalConfigured: isPayPalConfigured(),
         isSimulationMode: isSimulationMode(),
@@ -44,7 +43,7 @@ export async function POST(req: Request) {
 
     if (action === 'reject') {
       if (!actionId) return NextResponse.json({ error: 'Missing actionId' }, { status: 400 });
-      const ok = rejectAction(actionId, reason);
+      const ok = await rejectAction(actionId, reason);
       return NextResponse.json({ success: ok });
     }
 
@@ -54,7 +53,7 @@ export async function POST(req: Request) {
     }
 
     if (action === 'rescan') {
-      const data = await runAgentScan();
+      const data = await runAgentScan(true);
       return NextResponse.json({ success: true, ...data });
     }
 

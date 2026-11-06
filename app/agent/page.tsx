@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
   Activity,
@@ -28,8 +28,11 @@ export default function AgentCommandCenter() {
     confidenceThreshold: 92,
     maxAutonomousPayoutAmount: 500,
   });
-  const [loading, setLoading] = useState(true);
   const [rescanning, setRescanning] = useState(false);
+  const [balances, setBalances] = useState<{ availableUSD: string; totalUSD: string }>({
+    availableUSD: '42,500.00',
+    totalUSD: '48,250.00',
+  });
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState<
     { role: 'user' | 'agent'; text: string; actionTaken?: string }[]
@@ -51,7 +54,7 @@ export default function AgentCommandCenter() {
   const [inputSecret, setInputSecret] = useState('');
   const [credStatus, setCredStatus] = useState<{ loading?: boolean; msg?: string; error?: boolean } | null>(null);
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const res = await fetch('/api/agent');
       const data = await res.json();
@@ -59,18 +62,18 @@ export default function AgentCommandCenter() {
         setActions(data.actions);
         setLogs(data.logs);
         setConfig(data.config);
+        if (data.balances) setBalances(data.balances);
         if (data.environment) setEnvInfo(data.environment);
       }
     } catch (e) {
       console.error('Failed to load agent data:', e);
-    } finally {
-      setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchData();
+  }, [fetchData]);
 
   const handleRescan = async () => {
     setRescanning(true);
@@ -84,6 +87,7 @@ export default function AgentCommandCenter() {
       if (data.success) {
         setActions(data.actions);
         setLogs(data.logs);
+        if (data.balances) setBalances(data.balances);
       }
     } finally {
       setRescanning(false);
@@ -91,6 +95,9 @@ export default function AgentCommandCenter() {
   };
 
   const handleApprove = async (actionId: string) => {
+    const targetAction = actions.find((a) => a.id === actionId);
+    const agentType = targetAction?.agentType || 'AP_PAYOUTS';
+
     // 1. Optimistic UI update: instantly mark row as Approved in browser state
     setActions((prev) =>
       prev.map((a) =>
@@ -130,7 +137,7 @@ export default function AgentCommandCenter() {
             id: `LOG-${Date.now()}`,
             timestamp: new Date().toISOString(),
             actionId,
-            agentType: 'AP_PAYOUTS',
+            agentType,
             event: 'MANUALLY_APPROVED',
             details: `Approved by merchant and executed via PayPal Sandbox. Ref: ${data.referenceId}`,
             paypalReference: data.referenceId,
@@ -308,9 +315,9 @@ export default function AgentCommandCenter() {
               <span className="text-xs font-medium uppercase tracking-wider">PayPal Available USD</span>
               <Zap className="h-4 w-4 text-emerald-500" />
             </div>
-            <div className="mt-2 text-2xl font-bold text-slate-900">$42,500.00</div>
+            <div className="mt-2 text-2xl font-bold text-slate-900">${balances.availableUSD}</div>
             <div className="mt-1 flex items-center gap-1 text-xs text-slate-500">
-              <Shield className="h-3 w-3 text-slate-400" /> Total Balance: $48,250.00 USD
+              <Shield className="h-3 w-3 text-slate-400" /> Total Balance: ${balances.totalUSD} USD
             </div>
           </div>
 

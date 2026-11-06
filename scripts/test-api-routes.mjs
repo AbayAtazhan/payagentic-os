@@ -116,7 +116,47 @@ async function runTests() {
     console.log('   Status:', agentRes.status, 'Actions count:', agentJson.actions?.length);
     if (agentRes.status !== 200 || !agentJson.success) throw new Error('Agent scan failed');
 
-    console.log('\n🌟 ALL 7 STRICT RUNTIME & SECURITY TESTS PASSED FLAWLESSLY!');
+    // 8. Test Action Rejection (Verifying P0-1 boolean fix)
+    console.log('8. Testing POST /api/agent (reject action boolean contract) ...');
+    const testActionId = agentJson.actions?.[0]?.id || 'ACT-TEST-1';
+    const rejectRes = await fetch(`${base}/api/agent`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ action: 'reject', actionId: testActionId, reason: 'Test rejection' }),
+    });
+    const rejectJson = await rejectRes.json();
+    console.log('   Status:', rejectRes.status, 'Success boolean:', rejectJson.success);
+    if (rejectJson.success !== true || typeof rejectJson.success !== 'boolean') {
+      throw new Error(`Reject action returned non-boolean success: ${JSON.stringify(rejectJson)}`);
+    }
+
+    // 9. Test Copilot Chat Guardrail Cap (Verifying P0-2 payout cap)
+    console.log('9. Testing POST /api/agent/chat (guardrail cap on $2,500 payout) ...');
+    const guardrailRes = await fetch(`${base}/api/agent/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Disburse payout of $2500 to vendor@test.com' }),
+    });
+    const guardrailJson = await guardrailRes.json();
+    console.log('   Status:', guardrailRes.status, 'Action Taken:', guardrailJson.actionTaken);
+    if (guardrailJson.actionTaken !== 'PAYOUT_QUEUED_FOR_APPROVAL') {
+      throw new Error(`Guardrail failed to intercept $2,500 payout: ${JSON.stringify(guardrailJson)}`);
+    }
+
+    // 10. Test Copilot Chat Safe Payout with Idempotency Key (Verifying P1-1)
+    console.log('10. Testing POST /api/agent/chat (safe payout <= $500 with idempotency) ...');
+    const safePayoutRes = await fetch(`${base}/api/agent/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ message: 'Disburse milestone payout of $350 to dev@guild.example.com' }),
+    });
+    const safePayoutJson = await safePayoutRes.json();
+    console.log('   Status:', safePayoutRes.status, 'Reply mentions idempotency:', safePayoutJson.reply?.includes('IDEMP'));
+    if (!safePayoutJson.reply?.includes('IDEMP')) {
+      throw new Error(`Safe payout missing idempotency verification: ${JSON.stringify(safePayoutJson)}`);
+    }
+
+    console.log('\n🌟 ALL 10 STRICT RUNTIME, SECURITY & ENTERPRISE GUARDRAIL TESTS PASSED FLAWLESSLY!');
   } catch (err) {
     console.error('Test execution failed:', err);
     console.error('Server output was:', outputLog);

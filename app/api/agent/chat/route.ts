@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { openAiKey, aiModels } from '@/lib/ai';
 import { createInvoice, createPayout, getBalances, listInvoices } from '@/lib/paypal';
-import { recordAudit } from '@/lib/agent/engine';
+import { getAgentConfig, queueAction, recordAudit } from '@/lib/agent/engine';
 
 export async function POST(req: Request) {
   try {
@@ -144,14 +144,58 @@ async function handleOpenAiToolCalling(userMessage: string, apiKey: string) {
     }
 
     if (name === 'disburse_payout') {
+      const cfg = getAgentConfig();
+      const numAmount = Number(args.amount || '0');
+      const idempKey = `IDEMP-COPILOT-${Date.now()}`;
+
+      if (numAmount > cfg.maxAutonomousPayoutAmount) {
+        const actionId = `ACT-AP-COPILOT-${Date.now().toString(36)}`;
+        queueAction({
+          id: actionId,
+          agentType: 'AP_PAYOUTS',
+          title: `Copilot Payout Request: ${args.recipientEmail}`,
+          description: `AI Copilot initiated payout of $${args.amount} USD. Exceeds auto-pilot cap ($${cfg.maxAutonomousPayoutAmount}).`,
+          targetEntity: (args.recipientEmail as string).split('@')[0],
+          targetEmail: args.recipientEmail,
+          amount: { value: args.amount, currency_code: 'USD' },
+          confidenceScore: 90,
+          riskScore: 25,
+          requiresApproval: true,
+          status: 'PENDING_APPROVAL',
+          paypalApiMethod: 'POST /v1/payments/payouts',
+          payload: {
+            recipientEmail: args.recipientEmail,
+            amount: args.amount,
+            currency: 'USD',
+            note: args.note || 'Milestone Payout via Copilot',
+          },
+          reasoning: [
+            `Requested disbursement amount ($${args.amount}) exceeds autonomous cap of $${cfg.maxAutonomousPayoutAmount}.`,
+            `Enterprise security policy requires human sign-off before dispatching to PayPal.`,
+          ],
+          createdAt: new Date().toISOString(),
+        });
+        recordAudit(
+          actionId,
+          'AP_PAYOUTS',
+          'QUEUED',
+          `Copilot payout of $${args.amount} to ${args.recipientEmail} queued for merchant approval (exceeds $${cfg.maxAutonomousPayoutAmount} cap)`,
+        );
+        return {
+          reply: `⚠️ **Enterprise Guardrail Enforced**:\nThe requested payout of **$${args.amount} USD** to **${args.recipientEmail}** exceeds your autonomous safety cap (**$${cfg.maxAutonomousPayoutAmount} USD**).\n\n🛡️ **Action Required**: The transaction has been safely queued in your **Agent Command Center** for human review and sign-off.`,
+          actionTaken: 'PAYOUT_QUEUED_FOR_APPROVAL',
+        };
+      }
+
       const payout = await createPayout(
         [{ recipientEmail: args.recipientEmail, amount: args.amount, note: args.note || 'Milestone Payout' }],
         'Autonomous Payout via PayAgentic Copilot',
+        idempKey,
       );
       const batchId = payout.batch_header.payout_batch_id;
-      recordAudit(batchId, 'AP_PAYOUTS', 'MANUALLY_APPROVED', `AI Copilot (${model}) disbursed Payout to ${args.recipientEmail} ($${args.amount})`, batchId);
+      recordAudit(batchId, 'AP_PAYOUTS', 'MANUALLY_APPROVED', `AI Copilot (${model}) disbursed Payout to ${args.recipientEmail} ($${args.amount}) [Idemp: ${idempKey}]`, batchId);
       return {
-        reply: `⚡ **PayPal Payout Dispatched via ${model}**:\n- Batch ID: \`${batchId}\`\n- Receiver: ${args.recipientEmail}\n- Amount: $${args.amount} USD\n- Status: SUCCESS`,
+        reply: `⚡ **PayPal Payout Dispatched via ${model}**:\n- Batch ID: \`${batchId}\`\n- Receiver: ${args.recipientEmail}\n- Amount: $${args.amount} USD\n- Status: SUCCESS\n- Idempotency Key: \`${idempKey}\``,
         actionTaken: 'DISBURSE_PAYOUT',
         payload: payout,
       };
@@ -219,6 +263,48 @@ async function handleDeterministicRouter(message: string) {
     const amount = matchAmount ? matchAmount[1] : '450.00';
     const emailMatch = message.match(/([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/);
     const email = emailMatch ? emailMatch[1] : 'developer@partner-guild.example.com';
+    const cfg = getAgentConfig();
+    const numAmount = Number(amount);
+    const idempKey = `IDEMP-COPILOT-${Date.now()}`;
+
+    if (numAmount > cfg.maxAutonomousPayoutAmount) {
+      const actionId = `ACT-AP-COPILOT-${Date.now().toString(36)}`;
+      queueAction({
+        id: actionId,
+        agentType: 'AP_PAYOUTS',
+        title: `Copilot Payout Request: ${email}`,
+        description: `Copilot requested payout of $${amount} USD to ${email}. Exceeds autonomous threshold.`,
+        targetEntity: email.split('@')[0],
+        targetEmail: email,
+        amount: { value: amount, currency_code: 'USD' },
+        confidenceScore: 91,
+        riskScore: 22,
+        requiresApproval: true,
+        status: 'PENDING_APPROVAL',
+        paypalApiMethod: 'POST /v1/payments/payouts',
+        payload: {
+          recipientEmail: email,
+          amount: amount,
+          currency: 'USD',
+          note: 'Disbursed via PayAgentic Copilot',
+        },
+        reasoning: [
+          `Requested payout amount ($${amount}) exceeds autonomous threshold ($${cfg.maxAutonomousPayoutAmount}).`,
+          `Transaction held in escrow and routed to human merchant for verification.`,
+        ],
+        createdAt: new Date().toISOString(),
+      });
+      recordAudit(
+        actionId,
+        'AP_PAYOUTS',
+        'QUEUED',
+        `Copilot payout of $${amount} to ${email} queued for merchant review (exceeds $${cfg.maxAutonomousPayoutAmount} cap)`,
+      );
+      return NextResponse.json({
+        reply: `⚠️ **Enterprise Guardrail Enforced**:\nThe requested payout of **$${amount} USD** to **${email}** exceeds your autonomous safety cap (**$${cfg.maxAutonomousPayoutAmount} USD**).\n\n🛡️ **Safety Action**: Action \`${actionId}\` has been created and queued in your **Agent Command Center** for human review and approval.`,
+        actionTaken: 'PAYOUT_QUEUED_FOR_APPROVAL',
+      });
+    }
 
     const payout = await createPayout(
       [
@@ -229,13 +315,14 @@ async function handleDeterministicRouter(message: string) {
         },
       ],
       'AI Agent Vendor Payment',
+      idempKey,
     );
 
     const refId = payout.batch_header.payout_batch_id;
-    recordAudit(refId, 'AP_PAYOUTS', 'MANUALLY_APPROVED', `AI Copilot dispatched PayPal Payout to ${email} ($${amount})`, refId);
+    recordAudit(refId, 'AP_PAYOUTS', 'MANUALLY_APPROVED', `AI Copilot dispatched PayPal Payout to ${email} ($${amount}) [Idemp: ${idempKey}]`, refId);
 
     return NextResponse.json({
-      reply: `⚡ **PayPal Payout Dispatched**:\n- **Batch ID**: \`${refId}\`\n- **Receiver**: ${email}\n- **Amount**: $${amount} USD\n- **Status**: SUCCESS\n- **API Called**: \`POST /v1/payments/payouts\`\n- **Idempotency Key**: Generated and verified.`,
+      reply: `⚡ **PayPal Payout Dispatched**:\n- **Batch ID**: \`${refId}\`\n- **Receiver**: ${email}\n- **Amount**: $${amount} USD\n- **Status**: SUCCESS\n- **API Called**: \`POST /v1/payments/payouts\`\n- **Idempotency Key**: \`${idempKey}\``,
       actionTaken: 'DISBURSE_PAYOUT',
       payload: payout,
     });

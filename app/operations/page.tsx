@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle2, ChevronRight, FileText, Send, Terminal, Zap } from 'lucide-react';
+import { ArrowLeft, FileText, Send, Terminal, Zap } from 'lucide-react';
 
 export default function OperationsPortal() {
   const [activeTab, setActiveTab] = useState<'invoice' | 'payout' | 'order'>('invoice');

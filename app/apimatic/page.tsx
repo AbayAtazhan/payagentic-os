@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { ArrowLeft, BookOpen, CheckCircle, Code, Cpu, ExternalLink, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Code, Cpu, ShieldCheck } from 'lucide-react';
 
 export default function ApimaticPortal() {
   return (

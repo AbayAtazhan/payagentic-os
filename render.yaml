@@ -15,5 +15,7 @@ services:
         sync: false
       - key: AG_STUDIO_OPENAI_API_KEY
         sync: false
+      - key: NEXT_PUBLIC_FORCE_DEMO
+        value: "true"
       - key: NEXT_PUBLIC_DEMO_MODE
         value: "true"
