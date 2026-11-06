@@ -8,6 +8,10 @@
 ### Elevator Pitch (Tagline)
 *An autonomous multi-agent financial operations engine that audits accounts receivable, disburses milestone contractor payouts, detects velocity fraud, and executes two-way PayPal Sandbox transactions with enterprise dual-key guardrails and AG Grid.*
 
+### Live Demo URL (For Devpost "Try it out" link)
+👉 **[https://payagentic-os.vercel.app](https://payagentic-os.vercel.app)**  
+*Direct Agent Command Center:* **[https://payagentic-os.vercel.app/agent](https://payagentic-os.vercel.app/agent)**
+
 ---
 
 ## 📝 Devpost Form Fields (Ready to Copy & Paste)

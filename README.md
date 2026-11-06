@@ -1,7 +1,8 @@
 # PayAgentic OS — Autonomous Commerce & Financial Intelligence
 
 > 🏆 **Official Submission for the PayPal AI Hackathon 2026: Build What's Next with PayPal and AI**  
-> *Target Tracks:* Grand Prize ($12,000), Best Use of Agentic Commerce ($5,000), Best Use of AG Grid / AG Studio ($10,000), APIMatic Context Plugin ($3,000), Render Deployment Credits ($2,250).
+> *Target Tracks:* Grand Prize ($12,000), Best Use of Agentic Commerce ($5,000), Best Use of AG Grid / AG Studio ($10,000), APIMatic Context Plugin ($3,000), Render Deployment Credits ($2,250).  
+> 🌐 **Live Production Deployment:** [https://payagentic-os.vercel.app](https://payagentic-os.vercel.app) · [Agent Command Center](https://payagentic-os.vercel.app/agent)
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3.6-black?style=flat&logo=next.js)](https://nextjs.org)
 [![AG Grid](https://img.shields.io/badge/AG_Grid-36.2.0-blue?style=flat)](https://www.ag-grid.com)
