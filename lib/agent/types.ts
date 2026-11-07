@@ -12,7 +12,7 @@ export type AgentAction = {
   targetEntity: string;
   targetEmail: string;
   amount?: Money;
-  confidenceScore: number; // 0 - 100
+  confidenceScore: number; // 0 - 100, evaluated dynamically by AI or multi-factor statistical scoring
   riskScore: number; // 0 - 100
   requiresApproval: boolean;
   status: ActionStatus;
@@ -22,6 +22,13 @@ export type AgentAction = {
   createdAt: string;
   executedAt?: string;
   paypalRefId?: string;
+  statisticalMetrics?: {
+    zScore?: number;
+    sampleMean?: number;
+    sampleStdDev?: number;
+    daysOverdue?: number;
+    discountPercent?: number;
+  };
 };
 
 export type AgentConfig = {
@@ -32,10 +39,13 @@ export type AgentConfig = {
 
 export type AgentAuditLog = {
   id: string;
+  index: number;
   timestamp: string;
   actionId: string;
   agentType: AgentType;
   event: 'EVALUATED' | 'QUEUED' | 'AUTO_EXECUTED' | 'MANUALLY_APPROVED' | 'REJECTED';
   details: string;
   paypalReference?: string;
+  prevHash: string;
+  hash: string;
 };

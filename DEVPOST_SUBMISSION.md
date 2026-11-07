@@ -14,59 +14,58 @@ PayAgentic OS
 
 ### Elevator Pitch / Tagline (Max 200 characters)
 ```text
-Autonomous Commerce & Treasury Swarm powered by PayPal Sandbox REST APIs, AG Grid 36, and APIMatic with enterprise safety guardrails.
+Autonomous AI Copilot & Treasury Swarm on PayPal Sandbox REST APIs, AG Grid 36, and APIMatic with institutional safety guardrails.
 ```
-*(136 / 200 chars)*
+*(131 / 200 chars)*
 
 ---
 
 ### 1. Inspiration
-Enterprise finance is slowed by manual dunning, delinquent invoices, and unverified vendor payouts. We built PayAgentic OS to pioneer autonomous, self-healing corporate treasury operations on PayPal—letting multi-agent swarms safely orchestrate receivables, payouts, and risk controls under enterprise guardrails.
+Online merchants lose countless hours manually chasing overdue invoices, reconciling milestone payouts, and monitoring anomalous transaction spikes. We built PayAgentic OS to explore autonomous financial operations on the PayPal Developer Platform—allowing intelligent subagents to safely automate receivables, vendor disbursements, and risk screening under strict institutional guardrails.
 
 ---
 
 ### 2. What It Does
-PayAgentic OS deploys three autonomous agents connected to live PayPal Sandbox REST APIs:
-- **AR Dunning Agent**: Detects overdue accounts on `POST /v2/invoicing/send` with dynamic 3% prompt-pay offers (+34% recovery rate).
-- **AP Milestone Escrow Agent**: Verifies contractor deliverables against GitHub pull requests and auto-disburses payouts on `POST /v1/payments/payouts`.
-- **Risk & Fraud Sentinel**: Detects 3-sigma transaction velocity spikes and applies escrow holds on `POST /v2/checkout/orders`.
-- **Enterprise Guardrails**: Enforces $\ge 92\%$ confidence, a $\$500$ payout limit, and cryptographic idempotency (`PayPal-Request-Id`). Out-of-policy actions route to human sign-off in AG Grid.
-- **AG Studio Relational BI**: 5-collection analytics joining customers, invoices, transactions, and balances into live interactive dashboards.
+PayAgentic OS orchestrates three financial subagents integrated with live PayPal Sandbox REST APIs:
+- **AR Dunning Agent**: Evaluates overdue invoice aging on `POST /v2/invoicing/send`, attaching dynamic 3% prompt-settlement discounts to encourage immediate clearance.
+- **AP Milestone Agent**: Evaluates contractor milestone deliverables and executes batch payouts via `POST /v1/payments/payouts` with mandatory idempotency keys.
+- **Risk & Fraud Sentinel**: Computes the historical mean ($\mu$) and standard deviation ($\sigma$) over all transactions, mathematically flagging anomalies where $z \ge 2.0\sigma$ and placing settlements in temporary escrow.
+- **Institutional Guardrails**: Enforces a $\ge 92\%$ confidence floor, a $\$500.00$ payout ceiling, and a cryptographically hash-chained SHA-256 audit ledger. Out-of-policy requests route to human sign-off in AG Grid.
+- **AG Studio Relational BI**: 5-collection analytics joining customers, invoices, line items, transactions, and balances into interactive dashboards.
 
 ---
 
 ### 3. How We Built It
-- **PayPal REST APIs**: 2-way integration with Invoicing v2, Payouts v1, Orders v2, Balances, and Webhooks with zero-fail simulation fallback.
-- **AG Grid 36 & AG Studio 3.0**: Streaming tables with auto-sizing, custom cell renderers, and relational financial reporting.
-- **APIMatic**: Context plugin (`.apimatic/context.json`) and OpenAPI 3.1 specification for LLM tool calling.
-- **Next.js 16.3 & TypeScript**: Deployed live to Vercel edge and Render-ready via `render.yaml`.
-- **HyperFrames**: Programmatic 1080p pitch video with GSAP animations and synthesized voiceover.
+- **PayPal REST APIs**: 2-way integration with Invoicing v2, Batch Payouts v1, Checkout Orders v2, Balances, and Webhooks with high-fidelity simulation fallback.
+- **AG Grid 36 & AG Studio 3**: Interactive action grid with custom approval cell renderers and relational financial intelligence.
+- **APIMatic**: OpenAPI 3.1 specification contract and `.apimatic/context.json` plugin directly grounding LLM tool definitions.
+- **Next.js 16.3 & TypeScript**: Server-side security, deployed to Vercel edge and Render-ready via `render.yaml`.
+- **HyperFrames**: Programmatic 1080p demo video with GSAP animations and neural narration.
 
 ---
 
 ### 4. Challenges We Ran Into
 - Preventing PayPal sandbox HTTP 429 rate limits by chunking invoice detail fetches into batches of 5.
-- Eliminating cold-start state loss in serverless lambda environments.
-- Enforcing strict dual-tier guardrails so Natural Language Copilot requests cannot bypass autonomous spending limits.
+- Implementing a mathematically sound statistical anomaly detector that calculates true sample variance across sparse sandbox transaction histories.
+- Designing dual-tier safety boundaries ensuring Natural Language Copilot commands cannot bypass autonomous spending limits.
 
 ---
 
 ### 5. Accomplishments That We're Proud Of
-- 10/10 strict automated runtime security, guardrail, and route tests passing.
-- 0 build errors, 0 linter warnings on Next.js 16.3 Turbopack.
-- 100% partner alignment: PayPal Core, AG Grid, APIMatic, and Render.
-- End-to-end live deployment with an integrated 75-second 1080p pitch video.
+- 10/10 automated unit and cryptographic tests passing, including real sample variance calculations and SHA-256 tamper-evident chain verification.
+- Complete partner integration: PayPal Sandbox REST APIs, AG Grid 36, APIMatic OpenAPI 3.1, and Render deployment blueprint.
+- Zero-dependency deterministic offline mode allowing judges to test the complete agent workflow without requiring paid API keys.
 
 ---
 
 ### 6. What We Learned
-- Structuring OpenAPI 3.1 context schemas prevents 99% of LLM parameter hallucinations.
-- Autonomous finance requires explainable reasoning: operators must see why an agent acted before trusting it with funds.
+- Grounding AI agents in formal OpenAPI 3.1 contracts via APIMatic dramatically reduces parameter hallucination when invoking nested REST endpoints.
+- Autonomous finance requires explainable reasoning: operators must see exact mathematical rationale (e.g. z-scores, aging days) before delegating fund movements to an agent.
 
 ---
 
 ### 7. What's Next for PayAgentic OS
-- PayPal Mainnet production onboarding.
+- PayPal Mainnet onboarding and live webhook signature verification.
 - Multi-currency cross-border hedging using streaming balance telemetry.
 - Mobile push notifications for instant one-tap merchant approvals.
 
@@ -81,9 +80,9 @@ paypal, next.js, typescript, ag-grid, ag-studio, apimatic, render, vercel, hyper
 
 ### 9. Try It Out (Links)
 - **Live Production URL**: https://payagentic-os.vercel.app
-- **Pitch Video (75s 1080p)**: https://payagentic-os.vercel.app/demo-video.mp4
+- **Pitch Video (1080p)**: https://payagentic-os.vercel.app/demo-video.mp4
 - **GitHub Repository**: https://github.com/AbayAtazhan/payagentic-os
-- **Interactive REST Console**: https://payagentic-os.vercel.app/operations
-- **APIMatic Contract**: https://payagentic-os.vercel.app/apimatic
 - **Agent Command Center**: https://payagentic-os.vercel.app/agent
 - **AG Studio Dashboard**: https://payagentic-os.vercel.app/dashboard
+- **Interactive REST Console**: https://payagentic-os.vercel.app/operations
+- **APIMatic Contract**: https://payagentic-os.vercel.app/apimatic

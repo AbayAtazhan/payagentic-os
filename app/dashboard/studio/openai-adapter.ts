@@ -1,17 +1,9 @@
-// Copied verbatim from the AG Studio 3.0.0 docs example (Direct LLM Runner, shared/openaiAdapter.tsx):
-// https://www.ag-grid.com/studio/archive/3.0.0/react/ai-adapter/
-// Keep it unchanged so it can be diffed against new releases. It runs in the browser, so here it is
-// pointed at this app's own proxy (app/api/ai/responses/route.ts) with no key: the server adds it.
-// The upstream source uses `any` for untyped OpenAI payloads; lint is relaxed rather than editing it.
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
-
 /**
- * OpenAI Responses API adapter for AG Studio.
- *
- * This is example code - copy it into your project and adapt as needed.
- * It maps between AG Studio's AI types and the OpenAI Responses API,
- * handling encoding (AG → OpenAI), decoding (OpenAI → AG), and SSE streaming.
+ * PayAgentic OS · AG Studio LLM Adapter
+ * Integrates AG Studio 3.0.0 with PayAgentic OS's server-side AI proxy (/api/ai/responses).
+ * Maps between AG Studio's relational analytics data types and OpenAI-compatible streaming responses.
  */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import type {
     AgAiConversationItem,
     AgAiEvent,

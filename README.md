@@ -1,8 +1,8 @@
-# PayAgentic OS — Autonomous Commerce & Financial Intelligence
+# PayAgentic OS — Autonomous AI AR/AP & Risk Copilot for PayPal Sandbox
 
-> 🏆 **Official Submission for the PayPal AI Hackathon 2026: Build What's Next with PayPal and AI**  
-> *Target Tracks:* Grand Prize ($12,000), Best Use of Agentic Commerce ($5,000), Best Use of AG Grid / AG Studio ($10,000), APIMatic Context Plugin ($3,000), Render Deployment Credits ($2,250).  
-> 🌐 **Live Production Deployment:** [https://payagentic-os.vercel.app](https://payagentic-os.vercel.app) · [Agent Command Center](https://payagentic-os.vercel.app/agent)
+> 🏆 **Submission for the PayPal AI Hackathon 2026: Build What's Next with PayPal and AI**  
+> *Target Tracks:* Main Hackathon Tracks · Best Use of AG Grid & AG Studio · Best Use of APIMatic Context Plugin · Best Use of Render  
+> 🌐 **Live Demo Application:** [https://payagentic-os.vercel.app](https://payagentic-os.vercel.app) · [Agent Command Center](https://payagentic-os.vercel.app/agent) · [Pitch Video (1080p)](https://payagentic-os.vercel.app/demo-video.mp4)
 
 [![Next.js 16](https://img.shields.io/badge/Next.js-16.3.6-black?style=flat&logo=next.js)](https://nextjs.org)
 [![AG Grid](https://img.shields.io/badge/AG_Grid-36.2.0-blue?style=flat)](https://www.ag-grid.com)
@@ -13,156 +13,141 @@
 
 ---
 
-## 🌟 Executive Summary
+## 🌟 Overview
 
-**PayAgentic OS** is an autonomous financial operations platform designed for modern online merchants. Rather than acting as a passive chatbot with a payment button, PayAgentic OS deploys a **multi-agent AI swarm** with **enterprise dual-key guardrails** to autonomously audit accounts receivable, disburse verified milestone vendor payouts, detect velocity fraud, and execute two-way transactions through the **PayPal Developer Platform**.
+**PayAgentic OS** is an autonomous financial operations copilot designed for merchants operating on the PayPal Developer Platform. Rather than a generic chatbot that redirects users to an external checkout link, PayAgentic OS deploys **three specialized financial subagents** bounded by **institutional safety guardrails** to:
+1. Proactively manage accounts receivable (AR) and overdue invoice dunning with prompt settlement discounts.
+2. Automate verified vendor and contractor milestone disbursements (AP) using batch payouts and mandatory idempotency keys.
+3. Detect statistical transaction volume anomalies using mathematical $z$-score analysis and temporarily hold suspicious settlements in escrow.
 
-Powered by **AG Grid** and **AG Studio** for real-time financial tables and relational reports, **APIMatic Context Plugins** for deterministic agent tool-calling, and ready for one-click deployment on **Render**.
+All agent operations are displayed in an **AG Grid** command center, backed by an **AG Studio** relational intelligence dashboard, grounded in an **APIMatic Context Plugin & OpenAPI 3.1** specification, and tracked with a **cryptographically hash-chained audit ledger**.
 
 ```mermaid
 flowchart TD
-    Merchant["Merchant / Business Owner"] -->|Configures Guardrails & Thresholds| AgentOS["PayAgentic OS Core"]
+    Merchant["Merchant / Finance Operator"] -->|Configures Confidence Floor & Payout Cap| Guardrails["Institutional Safety Guardrails"]
     
-    subgraph Swarm["Autonomous Multi-Agent Swarm"]
-        AR["AR Dunning Agent"]
-        AP["AP Milestone Payouts Agent"]
-        Risk["Risk & Anomaly Sentinel"]
-        Pricing["Dynamic Pricing Copilot"]
+    subgraph Swarm["Autonomous Financial Agents"]
+        AR["AR Dunning Agent (Invoice Aging Analysis)"]
+        AP["AP Milestone Escrow Agent (Deliverables Verification)"]
+        Risk["Risk Sentinel (Statistical z-Score Anomaly Engine)"]
     end
     
-    AgentOS --> Swarm
+    Swarm --> Guardrails
     
-    subgraph Safety["Enterprise Guardrails & Policy Engine"]
-        Confidence{"Confidence >= 92%?"}
-        Cap{"Amount <= $500?"}
-        DualKey["Dual-Key Human Approval"]
+    subgraph PolicyEngine["Guardrail Policy Evaluation"]
+        ConfCheck{"Confidence >= 92%?"}
+        CapCheck{"Amount <= $500.00 USD?"}
+        DualKey["Operator Sign-Off Required in AG Grid"]
+        AutoExec["Auto-Pilot Execution Allowed"]
     end
     
-    Swarm --> Safety
-    Confidence -->|Yes & Under Cap| AutoExec["Autonomous Execution"]
-    Confidence -->|No or Over Cap| DualKey
-    Cap -->|Exceeds Cap| DualKey
+    Guardrails --> ConfCheck
+    ConfCheck -->|Pass| CapCheck
+    ConfCheck -->|Fail| DualKey
+    CapCheck -->|Pass| AutoExec
+    CapCheck -->|Fail| DualKey
     
     subgraph PayPal["PayPal Sandbox REST APIs"]
-        Invoicing["Invoicing v2 (Create & Send)"]
-        Payouts["Payouts v1 (Idempotent Batch)"]
-        Orders["Orders v2 (Capture & Escrow)"]
+        Invoicing["Invoicing v2 (POST /v2/invoicing/send)"]
+        Payouts["Batch Payouts v1 (POST /v1/payments/payouts)"]
+        Orders["Orders v2 (POST /v2/checkout/orders)"]
         Balances["Reporting / Balances & Txns"]
     end
     
     AutoExec --> PayPal
-    DualKey -->|Merchant Approved| PayPal
+    DualKey -->|Operator Approves| PayPal
     
-    subgraph UI["AG Grid & AG Studio Command Center"]
-        Grid["Interactive Action Grid (Custom Renderers)"]
-        Studio["AG Studio Relational Dashboard"]
-        Audit["Immutable Audit Stream"]
+    subgraph Ledger["Cryptographic Audit Ledger"]
+        HashChain["SHA-256 Tamper-Evident Hash Chain"]
     end
     
-    PayPal --> UI
+    PayPal --> Ledger
+    PayPal --> AGGrid["AG Grid 36 & AG Studio Relational Dashboard"]
 ```
 
 ---
 
-## 🚀 Key Features
+## 🚀 Key Technical Highlights
 
-### 1. Autonomous Multi-Agent Swarm
-* **Accounts Receivable (AR) Dunning Agent:** Continuously scans PayPal Invoices. Detects overdue invoices (e.g. Acme Corp 15 days past due), calculates customer default risk, crafts personalized communication, and dispatches prompt-settlement offers (e.g. 3% discount via PayPal Pay Later).
-* **Accounts Payable (AP) & Milestone Payouts Agent:** Audits incoming contractor deliverables against GitHub merges / milestone criteria, verifies available PayPal sandbox balance, and issues idempotent batch payouts via `POST /v1/payments/payouts`.
-* **Risk & Fraud Sentinel:** Analyzes transaction velocity, detects 3-sigma anomalies and suspicious refund patterns, and flags high-risk transactions for merchant review.
-* **Natural Language Copilot:** Natural language command interface with tool-calling capabilities (e.g. *"Disburse $450 to contractor@dev.com"*, *"Create invoice for Apex Corp for $1,250"*, *"Check PayPal balances"*).
+### 1. Dual-Engine Agent Swarm (Cloud Neural + Local Deterministic)
+* **Mode A (Cloud Neural LLM):** When `OPENAI_API_KEY` is provided, the copilot leverages `gpt-4o-mini` with function calling schemas dynamically loaded from the **APIMatic Context Plugin** (`.apimatic/context.json`).
+* **Mode B (Deterministic Financial Logic):** Runs completely offline with zero external dependencies using mathematical intent parsing and invoice aging models so judges can test the full workflow without providing an OpenAI key.
 
-### 2. Enterprise Dual-Key Safety Guardrails
-* **Configurable Confidence Threshold:** Configurable between 80% and 99% (default 92%). Actions below the threshold require explicit merchant sign-off.
-* **Autonomous Payout Cap:** Configurable single-transaction limit (default $500). Payouts exceeding this limit automatically trigger a dual-key hold.
-* **Immutable Audit Trail:** Complete audit logging tracking every thought, decision, timestamp, and PayPal reference ID.
+### 2. Real Statistical Anomaly Detection (Risk Sentinel)
+* Instead of arbitrary static flags, the Risk Sentinel computes the arithmetic mean $\mu = \frac{1}{N}\sum x_i$ and sample standard deviation $\sigma = \sqrt{\frac{1}{N-1}\sum (x_i - \mu)^2}$ across all transactions in the 30-day window.
+* Anomaly flags are mathematically triggered when a transaction deviates by $z \ge 2.0\sigma$, with the exact $z$-score and dollar deviation presented in the explainable reasoning.
 
-### 3. Deep Partner Integrations
-* **AG Grid (Community & Enterprise Themes):** Custom action cell renderers with live execution triggers, quick filter search, confidence chips, and status badges.
-* **AG Studio Dashboard (`/dashboard`):** Relational reports joining customers, invoices, line items, transactions, and balances.
-* **APIMatic Context Plugin (`.apimatic/context.json` & `docs/openapi.yaml`):** OpenAPI 3.1 specification contract grounding agent tool-calling with zero parameter hallucination.
-* **Render Deployment (`render.yaml`):** Infrastructure-as-code blueprint with automated health check at `/api/health`.
+### 3. Institutional Safety Guardrails
+* **Confidence Floor:** Configurable between 80% and 99% (default 92%). Recommendations scoring below the threshold are held for human sign-off.
+* **Autonomous Payout Cap:** Configurable per-transaction ceiling (default $500.00 USD). Any disbursement request over this limit automatically triggers an approval hold.
+* **Cryptographic Idempotency:** Every payout and invoice operation carries an explicit `PayPal-Request-Id` (e.g. `IDEMP-COPILOT-...`) preventing accidental double disbursements on network retries.
 
----
-
-## 🛠️ Tech Stack
-
-* **Framework:** Next.js 16.3.6 (App Router, Turbopack, TypeScript)
-* **Data Grids & Analytics:** AG Grid 36.2.0 & AG Studio 3.0.0
-* **Styling:** Tailwind CSS v4 & Lucide Icons
-* **APIs:** PayPal Sandbox REST APIs (OAuth 2.0, Invoicing v2, Payouts v1, Orders v2, Transaction Search, Balances)
-* **Agent Context:** APIMatic Context Plugin & OpenAPI 3.1
-* **Cloud Hosting:** Render Ready
+### 4. Cryptographically Hash-Chained Audit Ledger
+* Every action evaluation, auto-pilot execution, merchant approval, and rejection is recorded into a tamper-evident audit ledger.
+* Each entry computes `hash = SHA256(index + timestamp + actionId + event + prevHash + details)` linked directly to the previous block's hash. A built-in verification suite tests and validates the integrity of the chain.
 
 ---
 
-## 🏃 Quickstart & Running Locally
+## 🛠️ Sponsor Tool Integrations
 
-### Prerequisites
-* Node.js 20.9+ (v24 recommended)
-* npm 10+
+* **PayPal Developer Platform (Sandbox):**
+  * Invoicing v2 (`/v2/invoicing/invoices`, `/v2/invoicing/invoices/{id}/send`) with prompt discount settlement terms.
+  * Batch Payouts v1 (`/v1/payments/payouts`) with idempotency headers.
+  * Orders v2 (`/v2/checkout/orders`) for escrow risk holds.
+  * Reporting Balances (`/v1/reporting/balances`) and Transaction Search.
+  * Webhook listener (`/api/paypal/webhook`) with HMAC simulation.
 
-### Installation
+* **AG Grid 36 & AG Studio 3:**
+  * Interactive Action Grid (`app/agent/components/agent-actions-grid.tsx`) with custom action renderers (Approve / Reject buttons, status chips, confidence indicators).
+  * 5-collection relational BI model (`lib/dashboard-data.ts`) connecting customers, invoices, transactions, line items, and balances.
+
+* **APIMatic Context Plugin:**
+  * `.apimatic/context.json` and `docs/openapi.yaml` provide the OpenAPI 3.1 contract.
+  * `lib/ai.ts` directly imports and parses `.apimatic/context.json` to ground LLM tool definitions, eliminating parameter hallucinations.
+
+* **Render Deployment Blueprint:**
+  * `render.yaml` specifies an Infrastructure-as-Code web service with automated health monitoring at `/api/health`.
+
+---
+
+## 🧪 Testing & Verification
+
+Run the comprehensive unit test suite covering statistical calculations, cryptographic hash chaining, and policy bounds:
 
 ```bash
-# 1. Clone repository
-git clone https://github.com/your-username/payagentic-os.git
-cd payagentic-os
-
-# 2. Install dependencies
-npm install
-
-# 3. (Optional) Configure live PayPal Sandbox credentials
-# If omitted, PayAgentic OS runs in high-fidelity zero-fail simulator mode!
-cp env.example .env.local
-
-# 4. Start local development server
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) in your browser.
-
----
-
-## 🧭 Application Sitemap for Judges
-
-| Route | Name | Purpose |
-| :--- | :--- | :--- |
-| [`/`](http://localhost:3000) | **Portal Hub** | System overview, architecture diagram, and navigation center |
-| [`/agent`](http://localhost:3000/agent) | **Agent Command Center** | **Core Demo:** Autonomous swarm, AG Grid operations, guardrail sliders, natural language copilot, and audit trail |
-| [`/dashboard`](http://localhost:3000/dashboard) | **AG Studio Dashboard** | Relational financial intelligence and customizable reporting over PayPal data |
-| [`/operations`](http://localhost:3000/operations) | **Interactive REST Console** | Hands-on mutation tester for judges to dispatch real Invoices, Payouts, and Orders with live latency metrics |
-| [`/apimatic`](http://localhost:3000/apimatic) | **APIMatic Context Portal** | OpenAPI 3.1 schema and AI context plugin architecture |
-| [`/invoices`](http://localhost:3000/invoices) | **Invoices Grid** | Raw PayPal Invoices v2 collection in AG Grid |
-| [`/transactions`](http://localhost:3000/transactions) | **Transactions Grid** | 30-day transaction search and event codes in AG Grid |
-| [`/balances`](http://localhost:3000/balances) | **Balances Grid** | Multi-currency balance ledger in AG Grid |
-| [`/api/health`](http://localhost:3000/api/health) | **Health Check** | Render-compatible service status endpoint |
-
----
-
-## 🔒 Security & Reliability Architecture
-
-* **Zero Browser Secret Leakage:** PayPal Client Secrets and OpenAI keys remain strictly isolated on server-side runtimes.
-* **Cryptographic Idempotency:** All automated vendor payouts supply unique `PayPal-Request-Id` headers to eliminate double-disbursements.
-* **Input Validation & Sanitization:** All natural language commands pass through strict schema validation before dispatch.
-* **Dual-Mode Zero-Failure Fallback:** Automatically toggles between live PayPal Sandbox endpoints and high-fidelity deterministic simulation so judges never encounter blank screens or network dropouts.
-
----
-
-## 🧪 Verification & Automated Tests
-
-To run the automated security audit and runtime API test suite:
-
-```bash
-# Verify file integrity, partner specs, and guardrail boundaries
 node scripts/verify-system.mjs
+```
 
-# Verify runtime HTTP endpoints
+Run the end-to-end HTTP route and guardrail validation suite:
+
+```bash
+npm run build
 node scripts/test-api-routes.mjs
 ```
 
 ---
 
+## 🏃 Local Setup
+
+```bash
+# 1. Clone repository
+git clone https://github.com/AbayAtazhan/payagentic-os.git
+cd payagentic-os
+
+# 2. Install dependencies
+npm install
+
+# 3. Configure environment variables (optional; defaults to high-fidelity Sandbox simulation)
+cp env.example .env.local
+
+# 4. Start development server
+npm run dev
+```
+
+Visit [http://localhost:3000/agent](http://localhost:3000/agent) to explore the Agent Command Center.
+
+---
+
 ## 📄 License
 
-This project is licensed under the [MIT License](LICENSE).
+MIT Licensed — See [LICENSE](LICENSE) for details.

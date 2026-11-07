@@ -381,7 +381,11 @@ export async function createInvoice(draft: InvoiceDraft): Promise<Invoice> {
   return get<Invoice>(`/v2/invoicing/invoices/${encodeURIComponent(res.id)}`);
 }
 
-export async function sendInvoice(invoiceId: string): Promise<{ success: boolean; id: string }> {
+export async function sendInvoice(
+  invoiceId: string,
+  note?: string,
+  subject?: string,
+): Promise<{ success: boolean; id: string }> {
   if (isSimulationMode()) {
     simulatedInvoices = simulatedInvoices.map((inv) =>
       inv.id === invoiceId ? { ...inv, status: 'SENT' as InvoiceStatus } : inv,
@@ -389,9 +393,11 @@ export async function sendInvoice(invoiceId: string): Promise<{ success: boolean
     return { success: true, id: invoiceId };
   }
 
-  await post(`/v2/invoicing/invoices/${encodeURIComponent(invoiceId)}/send`, {
-    send_to_recipient: true,
-  });
+  const body: Record<string, unknown> = { send_to_recipient: true };
+  if (note) body.note = note;
+  if (subject) body.subject = subject;
+
+  await post(`/v2/invoicing/invoices/${encodeURIComponent(invoiceId)}/send`, body);
   return { success: true, id: invoiceId };
 }
 

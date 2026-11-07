@@ -38,6 +38,9 @@ export async function POST(req: Request) {
     if (action === 'approve') {
       if (!actionId) return NextResponse.json({ error: 'Missing actionId' }, { status: 400 });
       const result = await executeApprovedAction(actionId);
+      if (!result.success) {
+        return NextResponse.json(result, { status: 404 });
+      }
       return NextResponse.json(result);
     }
 

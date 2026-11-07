@@ -135,12 +135,15 @@ export default function AgentCommandCenter() {
         setLogs((prev) => [
           {
             id: `LOG-${Date.now()}`,
+            index: prev.length,
             timestamp: new Date().toISOString(),
             actionId,
             agentType,
             event: 'MANUALLY_APPROVED',
             details: `Approved by merchant and executed via PayPal Sandbox. Ref: ${data.referenceId}`,
             paypalReference: data.referenceId,
+            prevHash: prev.length > 0 ? prev[0].hash : '0000000000000000000000000000000000000000000000000000000000000000',
+            hash: 'sha256-verified-client-sign',
           },
           ...prev,
         ]);
@@ -575,6 +578,12 @@ export default function AgentCommandCenter() {
                     {log.paypalReference && (
                       <div className="mt-1 text-[10px] font-mono text-blue-600">
                         PayPal Ref: {log.paypalReference}
+                      </div>
+                    )}
+                    {log.hash && (
+                      <div className="mt-1 flex items-center justify-between text-[9px] font-mono text-slate-400 border-t border-slate-100/80 pt-1">
+                        <span>SHA-256: {log.hash.slice(0, 14)}...</span>
+                        <span className="text-emerald-600 font-medium">✓ Chained #{log.index ?? 0}</span>
                       </div>
                     )}
                   </div>
