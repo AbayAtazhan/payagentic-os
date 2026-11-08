@@ -41,6 +41,6 @@ Screenshots and visual checks with a vision model, multi-party payouts for agenc
 paypal, paypal-js-sdk-v6, paypal-orders-api, paypal-payouts, deepseek, ag-grid, next.js, react, typescript, tailwindcss
 
 ## Links
-- Live demo: _add_
+- Live demo: https://payagentic-os.vercel.app
 - Video: _add YouTube link_
 - Code: https://github.com/AbayAtazhan/payagentic-os
