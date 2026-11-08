@@ -1,16 +1,15 @@
 import { NextResponse } from 'next/server';
-import { isPayPalConfigured, isSimulationMode } from '@/lib/paypal';
+import { aiEnabled } from '@/lib/ai';
+import { paypalMode } from '@/lib/paypal';
+
+export const dynamic = 'force-dynamic';
 
 export async function GET() {
   return NextResponse.json({
-    status: 'healthy',
-    timestamp: new Date().toISOString(),
-    service: 'PayAgentic OS',
-    version: '1.0.0',
-    environment: {
-      isPayPalConfigured: isPayPalConfigured(),
-      isSimulationMode: isSimulationMode(),
-      nodeVersion: process.version,
-    },
+    status: 'ok',
+    service: 'ProofPay',
+    paypal: paypalMode(),
+    ai: aiEnabled() ? 'enabled' : 'missing key',
+    time: new Date().toISOString(),
   });
 }

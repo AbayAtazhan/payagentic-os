@@ -9,10 +9,9 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^10.6.1",
     "ag-grid-community": "36.2.0",
     "ag-grid-react": "36.2.0",
-    "ag-studio": "3.0.0",
-    "ag-studio-react": "3.0.0",
     "lucide-react": "^1.70.0",
     "next": "16.3.6",
     "react": "19.2.8",

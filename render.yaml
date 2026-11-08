@@ -1,9 +1,9 @@
 services:
   - type: web
-    name: payagentic-os
-    env: node
-    plan: standard
-    buildCommand: npm install && npm run build
+    name: proofpay
+    runtime: node
+    plan: starter
+    buildCommand: npm ci && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
     envVars:
@@ -11,11 +11,11 @@ services:
         value: production
       - key: PAYPAL_CLIENT_ID
         sync: false
-      - key: PAYPAL_SECRET
+      - key: PAYPAL_CLIENT_SECRET
         sync: false
-      - key: AG_STUDIO_OPENAI_API_KEY
+      - key: DEMO_FREELANCER_EMAIL
         sync: false
-      - key: NEXT_PUBLIC_FORCE_DEMO
-        value: "true"
-      - key: NEXT_PUBLIC_DEMO_MODE
-        value: "true"
+      - key: DEEPSEEK_API_KEY
+        sync: false
+      - key: PROOFPAY_SECRET
+        generateValue: true
