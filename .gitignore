@@ -43,3 +43,11 @@ next-env.d.ts
 # hyperframes
 .hyperframes
 demo-video/renders/
+
+# video production
+/video/capture/node_modules
+/video/capture/frames
+/video/film/.hyperframes
+/video/film/renders
+/video/music/*.wav
+/video/ProofPay-demo.mp4
