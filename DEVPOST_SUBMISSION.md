@@ -42,5 +42,5 @@ paypal, paypal-js-sdk-v6, paypal-orders-api, paypal-payouts, deepseek, ag-grid, 
 
 ## Links
 - Live demo: https://payagentic-os.vercel.app
-- Video: _add YouTube link_
+- Video: https://youtu.be/kqs708Q8oJI
 - Code: https://github.com/AbayAtazhan/payagentic-os

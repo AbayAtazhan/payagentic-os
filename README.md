@@ -6,7 +6,7 @@ The client's money is held in PayPal. When the freelancer delivers, an AI agent 
 Built for the PayPal AI Hackathon 2026.
 
 - Live demo: https://payagentic-os.vercel.app
-- Demo video: _add YouTube URL_
+- Demo video: https://youtu.be/kqs708Q8oJI
 
 ---
 
